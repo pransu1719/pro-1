@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pattern Generator & Number Analyzer — README</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Share+Tech+Mono&family=Rajdhani:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a12;
+    --card: #0f0f1e;
+    --border: #1e1e3a;
+    --cyan: #00f5ff;
+    --pink: #ff2d78;
+    --yellow: #ffe040;
+    --green: #39ff14;
+    --purple: #b94fff;
+    --text: #e0e0f0;
+    --muted: #6a6a9a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 16px;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Animated grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,245,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,245,255,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    z-index: 0;
+    animation: gridScroll 20s linear infinite;
+  }
+
+  @keyframes gridScroll {
+    0%   { background-position: 0 0; }
+    100% { background-position: 40px 40px; }
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    text-align: center;
+    margin-bottom: 56px;
+  }
+
+  .badge {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--pink), var(--purple));
+    color: #fff;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 6px 18px;
+    border-radius: 2px;
+    margin-bottom: 20px;
+    animation: pulse 3s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%,100% { box-shadow: 0 0 10px rgba(255,45,120,0.4); }
+    50%      { box-shadow: 0 0 28px rgba(255,45,120,0.9), 0 0 60px rgba(185,79,255,0.4); }
+  }
+
+  .hero h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(26px, 5vw, 46px);
+    font-weight: 900;
+    line-height: 1.15;
+    background: linear-gradient(90deg, var(--cyan), var(--purple), var(--pink), var(--yellow));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    background-size: 300% 100%;
+    animation: shimmer 4s linear infinite;
+    margin-bottom: 14px;
+  }
+
+  @keyframes shimmer {
+    0%   { background-position: 0% 50%; }
+    100% { background-position: 300% 50%; }
+  }
+
+  .hero .subtitle {
+    font-size: 18px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    font-weight: 600;
+  }
+
+  .hero .subtitle span { color: var(--cyan); }
+
+  /* ── META TAGS ── */
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 24px;
+  }
+
+  .tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    padding: 5px 14px;
+    border-radius: 2px;
+    letter-spacing: 1px;
+    border: 1px solid;
+  }
+
+  .tag.python  { color: var(--yellow);  border-color: var(--yellow);  background: rgba(255,224,64,0.07); }
+  .tag.beginner{ color: var(--green);   border-color: var(--green);   background: rgba(57,255,20,0.07); }
+  .tag.menu    { color: var(--cyan);    border-color: var(--cyan);    background: rgba(0,245,255,0.07); }
+  .tag.loops   { color: var(--purple);  border-color: var(--purple);  background: rgba(185,79,255,0.07); }
+
+  /* ── SECTION CARD ── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 30px 32px;
+    margin-bottom: 28px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+
+  .card.cyan-accent::before   { background: linear-gradient(90deg, var(--cyan), transparent); }
+  .card.pink-accent::before   { background: linear-gradient(90deg, var(--pink), transparent); }
+  .card.yellow-accent::before { background: linear-gradient(90deg, var(--yellow), transparent); }
+  .card.green-accent::before  { background: linear-gradient(90deg, var(--green), transparent); }
+  .card.purple-accent::before { background: linear-gradient(90deg, var(--purple), transparent); }
+
+  .card:hover { border-color: rgba(0,245,255,0.3); }
+
+  .section-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+
+  .card h2 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+
+  .card.cyan-accent   h2 { color: var(--cyan); }
+  .card.pink-accent   h2 { color: var(--pink); }
+  .card.yellow-accent h2 { color: var(--yellow); }
+  .card.green-accent  h2 { color: var(--green); }
+  .card.purple-accent h2 { color: var(--purple); }
+
+  .card p {
+    color: #b0b0cc;
+    line-height: 1.75;
+    font-size: 16px;
+  }
+
+  /* ── FEATURE LIST ── */
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-top: 4px;
+  }
+
+  .feature-item {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 18px 20px;
+    transition: transform 0.2s;
+  }
+
+  .feature-item:hover { transform: translateY(-3px); }
+
+  .feature-icon {
+    font-size: 28px;
+    margin-bottom: 10px;
+  }
+
+  .feature-item h3 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--cyan);
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+  }
+
+  .feature-item p {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* ── CODE BLOCK ── */
+  .code-block {
+    background: #07070f;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 20px 24px;
+    margin: 16px 0;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 14px;
+    line-height: 1.8;
+    overflow-x: auto;
+  }
+
+  .code-block .prompt { color: var(--pink); }
+  .code-block .cmd    { color: var(--yellow); }
+  .code-block .out    { color: var(--green); }
+  .code-block .comment{ color: var(--muted); }
+
+  /* ── PATTERN DEMO ── */
+  .pattern-demo {
+    background: #07070f;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 20px 24px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 15px;
+    line-height: 2;
+    text-align: center;
+    color: var(--cyan);
+    letter-spacing: 4px;
+    margin-top: 16px;
+    animation: glowText 2.5s ease-in-out infinite;
+  }
+
+  @keyframes glowText {
+    0%,100% { text-shadow: 0 0 6px rgba(0,245,255,0.4); }
+    50%      { text-shadow: 0 0 18px rgba(0,245,255,1), 0 0 40px rgba(0,245,255,0.4); }
+  }
+
+  /* ── MENU TABLE ── */
+  .menu-table { width: 100%; border-collapse: collapse; margin-top: 14px; }
+  .menu-table th {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: left;
+    padding: 8px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .menu-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(30,30,58,0.5);
+    font-size: 15px;
+    color: #c0c0d8;
+  }
+  .menu-table tr:last-child td { border-bottom: none; }
+  .menu-table .key {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 16px;
+    font-weight: bold;
+  }
+  .menu-table .k1 { color: var(--cyan); }
+  .menu-table .k2 { color: var(--yellow); }
+  .menu-table .k3 { color: var(--pink); }
+
+  /* ── SCREENSHOTS ── */
+  .screenshot-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 16px;
+  }
+
+  @media (max-width: 560px) {
+    .screenshot-grid { grid-template-columns: 1fr; }
+  }
+
+  .screenshot-box {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    background: #07070f;
+  }
+
+  .screenshot-bar {
+    background: #1a1a2e;
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot.r { background: #ff5f57; }
+  .dot.y { background: #febc2e; }
+  .dot.g { background: #28c840; }
+
+  .screenshot-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-left: 6px;
+    letter-spacing: 1px;
+  }
+
+  .screenshot-box img {
+    width: 100%;
+    display: block;
+  }
+
+  /* ── AUTHOR ── */
+  .author-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .avatar {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--cyan), var(--purple));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+    flex-shrink: 0;
+    border: 2px solid var(--cyan);
+    box-shadow: 0 0 20px rgba(0,245,255,0.3);
+  }
+
+  .author-info h3 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 16px;
+    color: var(--cyan);
+    margin-bottom: 4px;
+  }
+
+  .author-info p { color: var(--muted); font-size: 14px; }
+
+  /* ── FOOTER ── */
+  .footer {
+    text-align: center;
+    padding-top: 40px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    border-top: 1px solid var(--border);
+  }
+
+  .footer span { color: var(--pink); }
+
+  /* ── STEP LIST ── */
+  .steps { list-style: none; margin-top: 12px; }
+  .steps li {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(30,30,58,0.5);
+    color: #b0b0cc;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  .steps li:last-child { border-bottom: none; }
+  .step-num {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--cyan), var(--purple));
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Orbitron', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+    color: #000;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="badge">📁 Python Project · README</div>
+    <h1>Pattern Generator<br>&amp; Number Analyzer</h1>
+    <p class="subtitle">Built with <span>Python 3</span> · Console Application</p>
+    <div class="tags">
+      <span class="tag python">🐍 Python 3</span>
+      <span class="tag beginner">✅ Beginner Friendly</span>
+      <span class="tag menu">📋 Menu Driven</span>
+      <span class="tag loops">🔄 Loops &amp; Match</span>
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <div class="card cyan-accent">
+    <div class="section-label">// 01 — Overview</div>
+    <h2>📌 About The Project</h2>
+    <p>
+      Yeh ek <strong style="color:var(--cyan)">console-based Python program</strong> hai jo user ko do
+      powerful tools deta hai — ek beautiful star pattern generate karna aur ek range ke numbers ko
+      even/odd classify karna. Program ek loop mein chalta hai aur tab tak kaam karta hai jab tak
+      user exit na kare.
+    </p>
+  </div>
+
+  <!-- FEATURES -->
+  <div class="card pink-accent">
+    <div class="section-label">// 02 — Features</div>
+    <h2>⚡ Key Features</h2>
+    <div class="feature-grid">
+      <div class="feature-item">
+        <div class="feature-icon">⭐</div>
+        <h3>Star Pattern</h3>
+        <p>User ki marzi ke rows mein centered star pattern print karta hai.</p>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🔢</div>
+        <h3>Number Analyzer</h3>
+        <p>Start se end tak har number ko Even ya Odd batata hai.</p>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🔁</div>
+        <h3>Loop Menu</h3>
+        <p>Baar baar menu dikhata hai jab tak user khud exit na kare.</p>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🛡️</div>
+        <h3>Invalid Input</h3>
+        <p>Galat choice pe "wrong choice" message deta hai program crash hue bina.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- MENU OPTIONS -->
+  <div class="card yellow-accent">
+    <div class="section-label">// 03 — Menu</div>
+    <h2>📋 Program Menu</h2>
+    <table class="menu-table">
+      <tr>
+        <th>Option</th>
+        <th>Feature</th>
+        <th>Input Required</th>
+      </tr>
+      <tr>
+        <td><span class="key k1">1</span></td>
+        <td>Generate a Star Pattern</td>
+        <td>Number of rows (e.g. 5, 12)</td>
+      </tr>
+      <tr>
+        <td><span class="key k2">2</span></td>
+        <td>Analyze Range of Numbers</td>
+        <td>Start number &amp; End number</td>
+      </tr>
+      <tr>
+        <td><span class="key k3">3</span></td>
+        <td>Exit Program</td>
+        <td>— None —</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- HOW TO RUN -->
+  <div class="card green-accent">
+    <div class="section-label">// 04 — How To Run</div>
+    <h2>🚀 How To Run</h2>
+    <ol class="steps">
+      <li>
+        <div class="step-num">1</div>
+        <span>Make sure <strong style="color:var(--green)">Python 3</strong> aapke system mein installed hai.</span>
+      </li>
+      <li>
+        <div class="step-num">2</div>
+        <span>File download karein — <code style="color:var(--yellow);font-family:'Share Tech Mono',monospace">pr_2__2_.PY</code></span>
+      </li>
+      <li>
+        <div class="step-num">3</div>
+        <span>Terminal / Command Prompt kholen aur us folder mein jayein jahan file hai.</span>
+      </li>
+      <li>
+        <div class="step-num">4</div>
+        <span>Neeche diya command run karein aur menu se option chunein!</span>
+      </li>
+    </ol>
+    <div class="code-block">
+      <span class="prompt">$</span> <span class="cmd">python pr_2__2_.PY</span><br><br>
+      <span class="out">welcome to the pattern generator and number analyzer!</span><br><br>
+      <span class="out">1.GENERATE A PATTERN</span><br>
+      <span class="out">2.ANALYZEA RANGE OF NUMBERS</span><br>
+      <span class="out">3.EXIT</span><br><br>
+      <span class="prompt">$</span> <span class="cmd">ENTER YOUR CHOICE: _</span>
+    </div>
+  </div>
+
+  <!-- PATTERN PREVIEW -->
+  <div class="card purple-accent">
+    <div class="section-label">// 05 — Output Preview</div>
+    <h2>✨ Star Pattern Preview</h2>
+    <p style="color:var(--muted);margin-bottom:4px;">Example: 5 rows input dene par output —</p>
+    <div class="pattern-demo">
+      * <br>
+      * * <br>
+      * * * <br>
+      * * * * <br>
+      * * * * *
+    </div>
+  </div>
+
+  <!-- SCREENSHOTS -->
+  <div class="card cyan-accent">
+    <div class="section-label">// 06 — Screenshots</div>
+    <h2>🖥️ Program in Action</h2>
+    <div class="screenshot-grid">
+      <div class="screenshot-box">
+        <div class="screenshot-bar">
+          <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+          <span class="screenshot-label">output_1.png — Pattern &amp; Even/Odd</span>
+        </div>
+        <img src="10.png" alt="Screenshot 1 — Pattern generation and number analyzer output">
+      </div>
+      <div class="screenshot-box">
+        <div class="screenshot-bar">
+          <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+          <span class="screenshot-label">output_2.png — Range Output &amp; Exit</span>
+        </div>
+        <img src="11.png" alt="Screenshot 2 — Full range output and exit">
+      </div>
+    </div>
+  </div>
+
+  <!-- CONCEPTS USED -->
+  <div class="card pink-accent">
+    <div class="section-label">// 07 — Concepts Used</div>
+    <h2>📚 Python Concepts Used</h2>
+    <div class="feature-grid">
+      <div class="feature-item">
+        <div class="feature-icon">🔄</div>
+        <h3>while Loop</h3>
+        <p>Menu ko baar baar show karne ke liye infinite loop use ki gayi.</p>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🔀</div>
+        <h3>match-case</h3>
+        <p>Python 3.10+ ka structural pattern matching use kiya gaya menu ke liye.</p>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">📐</div>
+        <h3>Nested for Loops</h3>
+        <p>Star pattern banane ke liye nested loops use kiye gaye hain.</p>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">➗</div>
+        <h3>Modulus Operator</h3>
+        <p>% operator se number even hai ya odd check kiya jata hai.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- AUTHOR -->
+  <div class="card yellow-accent">
+    <div class="section-label">// 08 — Author</div>
+    <h2>👨‍💻 Developer Info</h2>
+    <div class="author-card">
+      <div class="avatar">👨‍🎓</div>
+      <div class="author-info">
+        <h3>Student Developer</h3>
+        <p>Python Programming · Beginner Level Project</p>
+        <p style="margin-top:6px;color:var(--yellow);">📂 File: pr_2__2_.PY &nbsp;|&nbsp; 🗓️ Year: 2025–26</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    Made with <span>♥</span> using Python 3 &nbsp;·&nbsp;
+    Pattern Generator &amp; Number Analyzer &nbsp;·&nbsp;
+    <span>README.html</span>
+  </div>
+
+</div>
+</body>
+</html>
